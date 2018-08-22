@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project</title>
+    <link rel="stylesheet" type="text/css" href="css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="container is-fluid">
+
+        <!-- MARKUP
+
+        Container
+            Section 1 - Results
+                
+                - insert before end
+
+                Row n
+                    input values | = | result
+                    input values | = | result
+                    input values | = | result ...
+
+            Section 2 - Input
+
+                - left-aligned
+                - wrap-text
+                - keyPress operator events
+                
+                Row
+                    parse ==> input 1 | op | input 2 | op | ... | input n
+            
+            Section 3 - Buttons ()
+
+                7   8   9   /   DEL    C
+                4   5   6   x   (       )
+                1   2   3   /   x^2     sqrt
+                0   .   %   +   [    =    ]
+            
+                Row 4 / Col6
+    
+        -->
+
+        <section class="section">
+            <div class="container">
+                <h1 class="title">Project</h1>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+
+                <div class="columns">
+
+                    <!-- COL 1 -->
+                    <div class="column calc-wrap">
+                        
+
+
+                        <!-- RESULTS FIELD -->
+                        <div class="field field-results">
+
+                            <div class="columns results">
+                                <div class="border column expression is-half">1000+337</div>
+                                <div class="border column operator">+</div>
+                                <div class="border column output">1337</div>
+                            </div>
+                            <div class="columns results">
+                                <div class="border column expression is-half">500+500+337</div>
+                                <div class="border column operator">+</div>
+                                <div class="border column output">1337</div>
+                            </div>
+                            <div class="columns results">
+                                <div class="border column expression is-half">1+999+337</div>
+                                <div class="border column operator">+</div>
+                                <div class="border column output">1337</div>
+                            </div>
+
+                        </div> <!-- END RESULTS -->
+                        
+
+
+                        <!-- INPUT FIELD -->
+                        <div class="field field-input">
+                              <div class="control">
+                                 <textarea id="input-field" class="input" type="text" placeholder="0.00">
+                                     
+                                    <!-- ERROR MESSAGE: SYNTAX ERROR -->
+
+                                 </textarea>
+                              </div>
+                        </div> <!-- END INPUT -->
+
+
+
+                        <!-- BUTTONS FIELD -->
+                        <div class="field field-buttons">
+
+                            <div class="columns">
+
+                                <!-- NUMBERS -->
+                                <div class="column is-mobile">
+                                    <div class="columns">
+                                        <div class="column btn is-4">
+                                            <button id="btn-7" class="button" value="7">7</button>
+                                        </div>
+                                        <div class="column btn is-4">
+                                            <button id="btn-8" class="button" value="8">8</button>
+                                        </div>
+                                        <div class="column btn is-4">
+                                            <button id="btn-9" class="button" value="9">9</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="columns">
+                                        <div class="column btn is-4">
+                                            <button id="btn-4" class="button" value="4">4</button>
+                                        </div>
+                                        <div class="column btn is-4">
+                                            <button id="btn-5" class="button" value="5">5</button>
+                                        </div>
+                                        <div class="column btn is-4">
+                                            <button id="btn-6" class="button" value="6">6</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="columns">
+                                        <div class="column btn is-4">
+                                            <button id="btn-1" class="button" value="1">1</button>
+                                        </div>
+                                        <div class="column btn is-4">
+                                            <button id="btn-2" class="button" value="2">2</button>
+                                        </div>
+                                        <div class="column btn is-4">
+                                            <button id="btn-3" class="button" value="3">3</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="columns">
+                                        <div class="column btn is-4">
+                                            <button id="btn-0" class="button" value="0">0</button>
+                                        </div>
+                                        <div class="column btn is-4">
+                                            <button id="btn-point" class="button" value=".">.</button>
+                                        </div>
+                                        <div class="column btn is-4"> <!-- % -->
+                                            <button id="btn-percent" class="button" value="&percnt;">&percnt;</button>
+                                        </div>
+                                    </div>
+                                </div> <!-- END NUMBERS -->
+
+                                <!-- OPERATORS -->
+                                <div class="column is-mobile">
+                                    <div class="columns">
+                                        <div class="column btn is-4"> <!-- / -->
+                                            <button id="btn-div" class="button" value="&frasl;">&frasl;</button>
+                                        </div>
+                                        <div class="column btn is-4">
+                                            <button id="btn-del" class="button">DEL</button>
+                                        </div>
+                                        <div class="column btn is-4">
+                                            <button id="btn-clear" class="button">C</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="columns">
+                                        <div class="column btn is-4">
+                                            <button id="btn-multi" class="button" value="x">x</button>
+                                        </div>
+                                        <div class="column btn is-4"> <!-- ( -->
+                                            <button id="btn-lpar" class="button" value="&lpar;">&lpar;</button>
+                                        </div>
+                                        <div class="column btn is-4"> <!-- ) -->
+                                            <button id="btn-rpar" class="button" value="&rpar;">&rpar;</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="columns">
+                                        <div class="column btn is-4">
+                                            <button id="btn-subtract" class="button" value="-">-</button>
+                                        </div>
+                                        <div class="column btn is-4"> <!-- ² -->
+                                            <button id="btn-square" class="button" value="&sup2;">x&sup2;</button>
+                                        </div>
+                                        <div class="column btn is-4"> <!-- √ -->
+                                            <button id="btn-radic" class="button" value="&radic;">&radic;</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="columns">
+                                        <div class="column btn is-4">
+                                            <button id="btn-add" class="button" value="+">+</button>
+                                        </div>
+                                        <div class="column btn is-8">
+                                            <button id="btn-equal" class="button is-info">=</button>
+                                        </div>
+                                    </div>
+                                </div> <!-- END OPERATORS -->
+
+                            </div>
+
+                        </div> <!-- END BUTTONS -->
+
+                    </div> <!-- END COL1 -->
+
+                    <!-- COL 2 -->
+                    <div class="column">
+
+                        <!-- <div class="field">
+                          <label class="label">Name</label>
+                          <div class="control">
+                            <input class="input" type="text" placeholder="Text input">
+                          </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control"><button class="button is-primary">Submit</button></div>
+                        </div> -->
+
+                        ---
+
+                    </div>
+
+                    <!-- COL 3 -->                        
+                    <div class="column">
+                        ---
+                    </div>
+
+            </div> <!-- END COLUMNS -->
+
+
+        </section>
+
+
+    </div> <!-- END CONTAINER -->
+
+    <script type="text/javascript" src="js/main.js"></script>
+  
+</body>
+
+</html>

@@ -14,19 +14,19 @@ REFACTOR CODE TO ES6
 
 <!-- Add Event Handler - Operators -->
 
-Validate the Expression
+<!-- Apply Regex Validation to the Expression -->
 
-Parse the Expression
+Pass Validated Results to Calculation Controller
 
 Calculate The Expression
-
-Apply Regex function to the Result
 
 Split the Result in three parts
 
 Save Result in Data Structure
 
 Create function to for decimals and commas
+
+Back Button After Error OR display modal el for Error
 
 Display the Result in the Input field
 

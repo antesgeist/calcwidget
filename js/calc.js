@@ -129,138 +129,167 @@ const parseController = (function() {
         [ /[√]/g, 'sqrt' ],
 
         // squared / exponent of 2
-        [ /[²]/g, 'squared' ]
+        [ /[²]/g, 'squared' ],
 
     ];
 
     // 1.2 - define regex object/array
-    const regex = {
+    const regexp = [
 
         /*
 
-            REGEX RULES
+        CALCULATION CONTROLLER
 
-                VALIDATION SEQUENCE
-                    1 - replace predefined substrings
-                    2 - regex validate expression for sqrt and squared
-                            grouped and non-grouped
-                    3 - calculate squared digits
-                    4 - calculate squreroots
-                    5 - validate with regex
-                    6 - get result
+            1 - calculate squared digits
+            2 - calculate squreroots
+            3 - calculate expression
+            4 - get result
+            
+        UI CONTROLLER
 
-                FUNCTIONS
-                    - simplify squareroots
-                    - is not empty
-                    - cannot divide by ZERO
-                    - "(" MUST be equal to ")" and vice versa | str.match() 
-                    - "(" MUST exist at the left side before right ")" | caveat: precedence?
+            1 - is not empty >> TO UI controller
 
-                REGEX
-                    - if char exist before radic string
-                    - if char next to radic isn't a decimal number
-                    - 2 or more succeeding operator(s) ( + - / x   x² . % )
-                    - number/expression inside inner parenthesis
-                        
-                        not allowed:
-                            - non-digit inside parenthesi e.g, (abc) | (+-/*.%)
-                            - non-operator in between digits e.g, (9%9) | (9radic9) | (9(9)
-                            - 
+        REGEX RULES
+
+            VALIDATION SEQUENCE
+                1 - replace predefined substrings
+                2 - regex validate expressions
+                3 - validate parehenthesis count
+
+            NON-OPERATORS:
+
+                sqrt , squared , % , ( , )
 
         */
 
 
 
-        substrings: [
+        // REGEXES
 
-            // regex sqrt OR squared WITH PARENTHESIS
-            /[\(]{1}(\d+(sqrt|squared)\d+)[\)]{1}/g,
-
-            // regex sqrt OR squared WITHOUT PARENTHESIS
-            /\d+(sqrt|squared)\d+/g,
-
-            // squared or ) THEN anything NON digit 
-            /(squared|\))\D*/g,
-
-            // if char exist before sqrt string
-            /.(?=sqrt)/g, 
-
-        ],
-
-        operators: [
-
-            // 2 or more succeeding operator(s)
-            /[+-/*.%]{2,}/g,           
-            
-            // number/expression inside inner parenthesis | GROUPED
-            /[\(]{1}(\D+|\d+([^+-/*]|sqrt|[**2])\d+|\d+[+-/*.%()]|[()%]\d+)[\)]{1}/g,
-
-        ]
-
-    };
-
-    // create sequence methods
-
-    // replace substrings: "x" with "*" | "√" with "radic"
-    const substringReplacer = function(expression) {
+        // ( 0-9 (sqrt OR squared OR %) 0-9 )
+        {
+            regex: /\d+(sqrt|squared|%)\d+/g,
+            error: 'Cannot parse sqrt, squared or % inside expression'
+        },
         
-        let cleanedExp = expression;
+        // squared or ) THEN anything NON digit
+        {
+            regex: /^squared/g,
+            error: 'Expressions cannot start with the squareroot operand'
+        },
 
-        for (let i = 0; i < charToReplace.length; i++) {
-            cleanedExp = cleanedExp.replace(charToReplace[i][0], charToReplace[i][1]);            
+        // char exist before sqrt OR %
+        {
+            regex: /.+sqrt/g,
+            error: 'Root exponent must be after a digit'
+        },
+
+        // 2 or more succeeding special characters OR operators
+        {
+            regex: /[+-/*.%]{2,}/g,
+            error: 'No succeeding operands allowed'
+        },
+
+        // starts with * / )
+        {
+            regex: /^[*/)]/g,
+            error: 'Expressions cannot start with x, / or )'
+        },
+
+        // 0-9 NON-operator 0-9
+        {
+            regex: /\d+[^+-/*]\d+/g,
+            error: 'Non operator better two digits'
+        },
+
+        // 0-9 operator NON-digit
+        {
+            regex: /\d+[+-/*]\D+/g,
+            error: 'Non-digit succeeding an operator'
+        },
+
+        // 0-9 operator
+        {
+            regex: /[\(]{1}(\d+[+-/*.%()])[\)]{1}/g,
+            error: 'Incomplete Expression'
+        },
+
+        // dividing by ZERO
+        {
+            regex: /.+\/0.*/g,
+            error: 'Cannot divide by zero'
+        },
+
+    ];
+
+    const substringReplacer = function(expression) {
+        // debugger;
+        let newExpression = expression;
+
+        // loop through expression string length
+        for (let i = 0; i < newExpression.length; i++) {
+            // loop through charToReplace length = 3
+            for (let j = 0; j < charToReplace.length; j++) {
+                newExpression = newExpression.replace(charToReplace[j][0], charToReplace[j][1]);
+            }
         }
 
-        return cleanedExp;
+        return newExpression;
 
     };
 
-    // regex validate expression for sqrt and squared
-    const initValidation = function(fnReplacer) {
+    const isValidParenthesis = function(expression) {
 
-        // var paragraph = 'The quick brown fox jumped over the lazy dog. It barked.';
-        // var regex = /[A-Z]/g;
-        // var found = paragraph.match(regex);
+        let lparCount, rparCount;
 
-        let currentExp, initRegex;
+        const parRegex = {
+            par: /[()]/g,
+            lpar: /\(/g,
+            rpar: /\)/g,
+        };
 
-        currentExp = fnReplacer;
-        substrRegex = regex.substrings;
+        if (expression.match(parRegex.par)) {
 
-        // check if expression is valid
-        for (let i = 0; i < initRegex.length; i++) {
-
-            if (currentExp.match(initRegex[i])) {
-                console.log(`===================\nInvalid Expression for regex: ${initRegex[i]}`);
+            lparCount = expression.match(parRegex.lpar).length;
+            rparCount = expression.match(parRegex.rpar).length;
+            
+            if (lparCount < rparCount) {
+            console.log('SYNTAX_ERROR: Missing ( in the expression');
+            } else if (rparCount < lparCount) {
+                console.log('SYNTAX_ERROR: Missing ) in the expression');
+            } else if (rparCount === lparCount) {
+                return true;
             }
 
         }
-
-        console.log(`===================\nExpression = ${currentExp}`);
 
     };
 
     return {
 
-        validator: function(inputVal) {
-
+        validator: function(input) {
+            // debugger;
             // VALIDATION SEQUENCE
 
+            let currentExp, checkedParExp;
+
             // 1 - replace predefined substrings
-                // DONE IN initValidation(expression)
-
-            // 2 - regex validate expression for sqrt and squared
-            initValidation(substringReplacer(inputVal));
-
-            // 3 - calculate squared digits
-            // 4 - calculate squreroots
-            // 5 - validate with regex
-            // 6 - get result
-
-
-            // validation sequence
-
+            currentExp = substringReplacer(input);
             
-        }
+            // 2 - regex validate expression for sqrt and squared
+            console.log(`===================`);
+            for (let i = 0; i < regexp.length; i++) {
+                // check if expression will pass the regexp array
+                if (currentExp.match(regexp[i].regex)) {
+                    console.log(`SYNTAX_ERROR: ${regexp[i].error}`);
+                } 
+            }
+
+            // 3 - check if parenthesis is equal
+            isValidParenthesis(currentExp);
+            
+            console.log(`===================\nExpression = ${currentExp}`);
+        },
 
     }
 
@@ -304,15 +333,11 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
 
         // check if inputField has value
         if (UICtrl.hasValue(e.target)) {
-
             // 3 - update expression value
             dataCtrl.updateExp(newVal);
             
             // 4 - display input value
             UICtrl.displayInput(newVal);
-
-            // log current expression
-            console.log('Current Expression: ' + dataCtrl.getExpression());
         }
 
     };
@@ -346,9 +371,9 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
     const getResult = function() {
 
         // 1 - validate input field
-        // 2 - throw error if invalid
-        // 3 - update 
         parseCtrl.validator(s(DOM.inputField).value);
+        
+        // 2 - update
 
     };
 

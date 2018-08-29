@@ -1,5 +1,4 @@
 'use strict';
-const s = document.querySelector.bind(document);
 
 /* CALCULATOR WIDGET
  * 
@@ -12,6 +11,15 @@ const s = document.querySelector.bind(document);
 
 
 
+
+
+// Bind "s" as querySelector
+const s = document.querySelector.bind(document);
+
+
+
+
+
 // DATA CONTROLLER
 const dataController = (function() {
     
@@ -19,6 +27,7 @@ const dataController = (function() {
     const data = {
         currentExp: undefined,
         result: 0,
+        error: undefined,
         splitResults: {
             expression: [],
             operator: [],
@@ -28,8 +37,12 @@ const dataController = (function() {
     
     return {
 
-        updateExp: function(current) {
-            data.currentExp = current;
+        getProps: function() {
+            return Object.keys(data);
+        },
+        
+        updateData: function(prop, val) {
+            data[prop] = val;
         },
 
         resetExp: function() {
@@ -37,18 +50,21 @@ const dataController = (function() {
             console.log('Cleared.');
         },
 
-        getExpression: function() {
-            return data.currentExp;
+        getData: function(prop) {
+            // console.log(JSON.stringify(data, 0, 4));
+            return data[prop];
         },
 
-        getData: function() {
-            // JSON.stringify( objectLiteral, undefined/0, whitespaces )
-            console.log(JSON.stringify(data, 0, 4));
-        },
+        getAll: function() {
+            // return JSON.stringify(data, undefined, 4);
+            return data;
+        }
 
     }
 
 })(); // END DATA CONTROLLER
+
+
 
 
 
@@ -112,15 +128,17 @@ const UIController = (function() {
 
 
 
+
+
 // PARSE CONTROLLER
 const parseController = (function() {
 
     // ARTIHMETIC RULE: MDAS
 
-    // 1.1 - define substrings to replace
-    const charToReplace = [
+    let error = [];
 
-        /* [ substring, replaceWith ] */
+    // 1.1 - define substrings to replace [ substring, replaceWith ]
+    const charToReplace = [
 
         // multiply
         [ 'x', '*' ],
@@ -129,7 +147,9 @@ const parseController = (function() {
         [ /[√]/g, 'sqrt' ],
 
         // squared / exponent of 2
-        [ /[²]/g, 'squared' ],
+        [ /[²]/g, '^2' ],
+
+        // substrings for math.eval sqrt and percentage
 
     ];
 
@@ -166,57 +186,48 @@ const parseController = (function() {
 
         // REGEXES
 
-        // ( 0-9 (sqrt OR squared OR %) 0-9 )
         {
             regex: /\d+(sqrt|squared|%)\d+/g,
             error: 'Cannot parse sqrt, squared or % inside expression'
         },
         
-        // squared or ) THEN anything NON digit
         {
             regex: /^squared/g,
             error: 'Expressions cannot start with the squareroot operand'
         },
 
-        // char exist before sqrt OR %
         {
             regex: /.+sqrt/g,
             error: 'Root exponent must be after a digit'
         },
 
-        // 2 or more succeeding special characters OR operators
         {
             regex: /[+-/*.%]{2,}/g,
             error: 'No succeeding operands allowed'
         },
 
-        // starts with * / )
         {
             regex: /^[*/)]/g,
             error: 'Expressions cannot start with x, / or )'
         },
 
-        // 0-9 NON-operator 0-9
         {
-            regex: /\d+[^+-/*]\d+/g,
-            error: 'Non operator better two digits'
+            regex: /\d{100,}[^+-/*]\d{100,}/g,
+            error: 'Non operator between two digits'
         },
 
-        // 0-9 operator NON-digit
         {
             regex: /\d+[+-/*]\D+/g,
             error: 'Non-digit succeeding an operator'
         },
 
-        // 0-9 operator
         {
             regex: /[\(]{1}(\d+[+-/*.%()])[\)]{1}/g,
             error: 'Incomplete Expression'
         },
 
-        // dividing by ZERO
         {
-            regex: /.+\/0.*/g,
+            regex: /.+\/0\D*/g,
             error: 'Cannot divide by zero'
         },
 
@@ -238,7 +249,7 @@ const parseController = (function() {
 
     };
 
-    const isValidParenthesis = function(expression) {
+    const isEqualPar = function(expression) {
 
         let lparCount, rparCount;
 
@@ -248,18 +259,20 @@ const parseController = (function() {
             rpar: /\)/g,
         };
 
+        // evaluate only if parenthesis exist
         if (expression.match(parRegex.par)) {
 
+            // returns array of open or close parenthesis
             lparCount = expression.match(parRegex.lpar).length;
             rparCount = expression.match(parRegex.rpar).length;
             
             if (lparCount < rparCount) {
-            console.log('SYNTAX_ERROR: Missing ( in the expression');
+                error.push('SYNTAX_ERROR: Missing ( in the expression');
             } else if (rparCount < lparCount) {
-                console.log('SYNTAX_ERROR: Missing ) in the expression');
+                error.push('SYNTAX_ERROR: Missing ) in the expression');
             } else if (rparCount === lparCount) {
                 return true;
-            }
+            } 
 
         }
 
@@ -269,26 +282,16 @@ const parseController = (function() {
 
         validator: function(input) {
             // debugger;
-            // VALIDATION SEQUENCE
-
-            let currentExp, checkedParExp;
 
             // 1 - replace predefined substrings
-            currentExp = substringReplacer(input);
-            
-            // 2 - regex validate expression for sqrt and squared
-            console.log(`===================`);
-            for (let i = 0; i < regexp.length; i++) {
-                // check if expression will pass the regexp array
-                if (currentExp.match(regexp[i].regex)) {
-                    console.log(`SYNTAX_ERROR: ${regexp[i].error}`);
-                } 
-            }
+            let inputExp = substringReplacer(input);
 
-            // 3 - check if parenthesis is equal
-            isValidParenthesis(currentExp);
+            // Math.js parser and evaluation
+            let parsedExp = math.parse(inputExp);
+
+            // return as a string ELSE will be return as an Object
+            return parsedExp + '';
             
-            console.log(`===================\nExpression = ${currentExp}`);
         },
 
     }
@@ -297,44 +300,48 @@ const parseController = (function() {
 
 
 
+
+
 // APP CONTROLLER
 const appController = (function(UICtrl, dataCtrl, parseCtrl) {
 
     // import UI DOMStrings
     const DOM = UICtrl.getDOMStrings();
+    const props = dataCtrl.getProps();
 
     // setup event listeners
-    const setEventListeners = function() {
+    const setupEventListeners = function() {
 
         s(DOM.fieldButtons).addEventListener('click', displayValue);
         s(DOM.btnClear).addEventListener('click', clearValue);
         s(DOM.btnDelete).addEventListener('click', deleteValue);
         s(DOM.btnEqual).addEventListener('click', getResult);
-        
+
     };
 
     // display value to input field
     const displayValue = function(e) {
-
+        // debugger;
         let val, newVal, currentExp;
 
         // 1 - save target value
         val = e.target.value;
 
         // 2 - get current expression value
-        currentExp = dataCtrl.getExpression();
+        currentExp = dataCtrl.getData(props[0]);
 
         // check if expression value is set
-        if (currentExp) {
-            newVal = currentExp + val;
-        } else {
-            newVal = val;
-        }
+        currentExp ? newVal = currentExp + val : newVal = val;
+        // if (currentExp) {
+        //     newVal = currentExp + val;
+        // } else {
+        //     newVal = val;
+        // }
 
         // check if inputField has value
         if (UICtrl.hasValue(e.target)) {
             // 3 - update expression value
-            dataCtrl.updateExp(newVal);
+            dataCtrl.updateData(props[0],newVal);
             
             // 4 - display input value
             UICtrl.displayInput(newVal);
@@ -355,33 +362,37 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
     const deleteValue = function() {
 
         // check if expression isn't empty
-        if (dataCtrl.getExpression()) {
+        if (dataCtrl.getData(props[0])) {
             // 1 - delete last input field value
             UICtrl.deleteInput();
 
             // 2 - update data structure expression
-            dataCtrl.updateExp(s(DOM.inputField).value);
-
-            // 3 - log new expression
-            console.log('Current Expression: ' + dataCtrl.getExpression());
+            dataCtrl.updateData(props[0],s(DOM.inputField).value);
         }
 
     };
 
     const getResult = function() {
-
-        // 1 - validate input field
-        parseCtrl.validator(s(DOM.inputField).value);
+        // debugger;
         
-        // 2 - update
+        const input = s(DOM.inputField).value;
+        
+        // if valid input
+        const isValidated = parseCtrl.validator(input);
+        const result = math.eval(isValidated);
+
+        // update result
+        dataCtrl.updateData(props[2], result);
+
+        console.log('Parsed: ' + isValidated + ' = ' + dataCtrl.getData(props[2]));
 
     };
 
     return {
-        
+
         init: function() {
             console.log('widget started_:');
-            setEventListeners();
+            setupEventListeners();
             UICtrl.reset();
         },
 
@@ -391,5 +402,5 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
 
 
 
-// INITIALIZE APP
+// INITIALIZE APP 
 appController.init();

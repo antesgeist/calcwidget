@@ -1,6 +1,13 @@
 # TODO LIST
 
-REFACTOR CODE TO ES6
+REFACTOR CODE
+    
+    ES6 arrow
+    arr.map
+
+<!-- INTEGRATE MATH.JS -->
+
+REWRITE PARSER
 
 <!-- Identify Design Pattern -->
 
@@ -37,16 +44,6 @@ Display the Result in the new Results row
 ---
 
 # REGEX
-
-to use:
-
-\d
-\D
-[a-zA-Z]
-(...)
-\
-/href="[^"]+"/ | href= | " | everything !" | " |
-
 
 https://regex101.com/
 
@@ -145,10 +142,3 @@ $           Matches the end of a string without consuming any characters. If mul
 
 \B          Matches, without consuming any characters, at the position between two characters matched by \w.
                 /r\B/g > regex is really cool > "r"egex "r"eally | start of the word
-
-
-
-
-
-
-

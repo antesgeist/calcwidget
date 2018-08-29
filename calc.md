@@ -1,13 +1,9 @@
 # TODO LIST
+---
 
-REFACTOR CODE
-    
-    ES6 arrow
-    arr.map
+Refactore Code > ES6 arrow > arr.map 
 
-<!-- INTEGRATE MATH.JS -->
-
-REWRITE PARSER
+<!-- Import mathjs -->
 
 <!-- Identify Design Pattern -->
 
@@ -21,15 +17,29 @@ REWRITE PARSER
 
 <!-- Add Event Handler - Operators -->
 
+<!-- Apple Regex Substring Replacer -->
+
 <!-- Apply Regex Validation to the Expression -->
 
-Pass Validated Results to Calculation Controller
+<!-- Pass Validated Results to math.js eval() -->
 
-Calculate The Expression
+<!-- Calculate The Expression -->
+
+<!-- Save Result in Data Structure -->
+
+<!-- Rewrite Parser -->
+
+<!-- Capture Syntax Error -->
+
+<!-- Display Result to input field -->
+
+<!-- Concatenate new input to input field if result = true -->
+
+<!-- Concatenate Syntax Error to Current Input -->
+
+<!-- If Error, delete the whole line of Error -->
 
 Split the Result in three parts
-
-Save Result in Data Structure
 
 Create function to for decimals and commas
 
@@ -41,7 +51,11 @@ Insert new HTML results row
 
 Display the Result in the new Results row
 
+
+
 ---
+
+
 
 # REGEX
 

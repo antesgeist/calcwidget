@@ -13,13 +13,10 @@ A basic JavaScript calculator based on GNOME's Calculator app from GNU/Linux. Th
 ## Screenshots
 
 ##### Native JS Arithmetic Rules
-
 ![native-js-arithmetic-rules](https://raw.githubusercontent.com/antigens/calcwidget/master/img/img2.png)
 
 ##### Free-Context Expression Parsing
-
 ![free-context-expression-parsing](https://raw.githubusercontent.com/antigens/calcwidget/master/img/img1.png)
 
 ##### Syntax Validation
-
 ![syntax-validation](https://raw.githubusercontent.com/antigens/calcwidget/master/img/img3.png)

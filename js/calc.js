@@ -162,7 +162,6 @@ const parseController = (function() {
         // debugger;
         let newExp = expression;
 
-        // loop through expression string length
         for (let i = 0; i < newExp.length; i++) {
             // loop through charToReplace length = 3
             for (let j = 0; j < charToReplace.length; j++) {
@@ -230,10 +229,6 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
         // debugger;
         let val, newVal, hasExp, hasResult;
 
-
-        // if current result has value, newVal = curResult + val
-
-
         // 1 - save target value
         val = e.target.value;
 
@@ -244,16 +239,11 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
         // check if expression value is set
         if (hasResult) {
             newVal = input() + val
-            console.log('hasResult triggered!')
         } else if (hasExp) {
             newVal = hasExp + val
-            console.log('hasExp triggered!')
         } else {
             newVal = val
-            console.log('else triggered!')
         }
-
-        // currentExp ? newVal = currentExp + val : newVal = val;
 
         // check if inputField has value
         if (UICtrl.hasValue(e.target)) {
@@ -281,7 +271,6 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
         // check if expression isn't empty
         if (hasError()) {
             UICtrl.deleteError(input())
-            // dataCtrl.reset()
             dataCtrl.updateData('curExp', input())
         } else if (dataCtrl.getData('curExp')) {
             // 1 - delete last input field value
@@ -318,8 +307,6 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
             // log result
             console.log(dataCtrl.getAll())
 
-            // dataCtrl.updateData('curExp', undefined)
-        
         } catch (error) {
 
             // if not error, do this

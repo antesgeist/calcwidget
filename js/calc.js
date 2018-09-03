@@ -1,17 +1,16 @@
-'use strict';
+'use strict'
 
 /* CALCULATOR WIDGET
- * 
+ *
  * - PARSE CONTROLLER           - calculate parsed input
  * - DATA CONTROLLER            - control result data
  * - UI CONTROLLER              - control UI
  * - APP CONTROLLER             - control flow
- * 
+ *
  */
 
 // Bind "s" as querySelector
-const s = document.querySelector.bind(document);
-
+const s = document.querySelector.bind(document)
 
 
 
@@ -27,11 +26,14 @@ const dataController = (function() {
         parsedExp: undefined,
         splitResults: {
             expression: [],
-            operator: [],
-            output: []
+            unparsedExp: [],
+            output: [],
         }
     };
     
+    // create function constructor
+    // recreate data arguments
+
     return {
 
         getProps: function() {
@@ -74,18 +76,24 @@ const dataController = (function() {
 // UI CONTROLLER
 const UIController = (function() {
 
-    // create domstrings object
+    // create DOMstrings object
     const DOMStrings = {
         
         container: '.calc-wrap',
-        fieldResults: '.field-result',
+        fieldResults: '.field-results',
         fieldInput: '.field-input',
         fieldButtons: '.field-buttons',
-        resultsRow: '.results',
-        resultsExpres: '.expression',
-        resultsOperator: '.operator',
-        resultsOutput: '.output',
+
+        fieldResultsFloating: '.floatbot',
+
+        // class substrings
+        resultsRow: 'results',
+        resultsExpres: 'expression is-half',
+        resultsEquals: 'equals',
+        resultsOutput: 'output',
+        
         inputField: '#input-field',
+
         btnDivide: '#btn-div',
         btnMultiply: '#btn-multi',
         btnAdd: '#btn-add',
@@ -96,25 +104,25 @@ const UIController = (function() {
 
     };
 
-    const inputFieLd = s(DOMStrings.inputField);
-
     const newString = function(exp) {
-        const string = exp.substring(0, exp.length - 1);
-        return string;
-    };
+        const string = exp.substring(0, exp.length - 1)
+        return string
+    }
+
+    const inputFieLd = s(DOMStrings.inputField)
 
     return {
 
         getDOMStrings: function() {
-            return DOMStrings;
+            return DOMStrings
         },
         
         displayInput: function(val) {
-            inputFieLd.value = val;
+            inputFieLd.value = val
         },
 
         deleteInput: function(input) {
-            inputFieLd.value = newString(input);
+            inputFieLd.value = newString(input)
         },
 
         deleteError: function(input) {
@@ -122,11 +130,68 @@ const UIController = (function() {
         },
 
         hasValue: function(el) {
-            return el.hasAttribute('value');
+            return el.hasAttribute('value')
         },
 
-        reset: function(obj) {
-            inputFieLd.value = "";
+        newRow: function(exp, output) {
+
+            // set row elements
+            const resultsContainer = s(DOMStrings.fieldResults)
+            const resultsFloat = s(DOMStrings.fieldResultsFloating)
+            const rowContainer = document.createElement('div')
+            rowContainer.className = `columns ${DOMStrings.resultsRow}`
+            
+            // inner div substrings array
+            const innerDivClasses = [
+                DOMStrings.resultsExpres,
+                DOMStrings.resultsEquals,
+                DOMStrings.resultsOutput,
+            ]
+
+            //  create inner div > insert text content > append to row container
+            innerDivClasses.forEach(function(cur) {
+
+                // create inner div element
+                const innerDiv = document.createElement('div')
+                innerDiv.className = `column ${cur}`
+
+                // check innerdiv class subtrings for regex match then set text content
+                if (innerDiv.className.match(/.*expression.*/g)) {
+                    innerDiv.textContent = exp
+                } else if (innerDiv.className.match(/.*equals.*/g)) {
+                    innerDiv.textContent = '='
+                } else if (innerDiv.className.match(/.*output.*/g)) {
+                    innerDiv.textContent = output
+                }
+
+                // insert inner div to new row
+                rowContainer.appendChild(innerDiv)
+            })
+
+            // append new row to results container
+            resultsFloat.appendChild(rowContainer)
+
+            // scroll to bottom
+            resultsContainer.scrollTo({
+                top: resultsContainer.scrollHeight,
+                behavior: 'auto'
+            })
+
+            // calc space difference between row block(resultsFloat) and row container(resultsContainer)
+            const offsetTop = resultsContainer.offsetHeight - resultsFloat.offsetHeight
+
+            // offset relative top space ELSE enable scrolling and style.top = null
+            if (resultsFloat.offsetHeight < resultsContainer.offsetHeight) {
+                resultsFloat.style.top = `${offsetTop - 5}px`
+            } else {
+                resultsContainer.className += ' scrollable'
+                resultsFloat.style = null
+            }
+            
+        },
+
+        reset: function() {
+            inputFieLd.value = ""
         }
 
     }
@@ -155,6 +220,9 @@ const parseController = (function() {
         // squared / exponent of 2
         [ /[²]/g, '^2' ],
 
+        // comma
+        [ /\,/g, '' ],
+
     ];
 
     // substring replacer
@@ -162,15 +230,14 @@ const parseController = (function() {
         // debugger;
         let newExp = expression;
 
+        // loop through each string and check for replaceable character
         for (let i = 0; i < newExp.length; i++) {
-            // loop through charToReplace length = 3
             for (let j = 0; j < charToReplace.length; j++) {
                 newExp = newExp.replace(charToReplace[j][0], charToReplace[j][1]);
             }
         }
 
         return newExp;
-
     };
 
     return {
@@ -179,7 +246,7 @@ const parseController = (function() {
             // debugger;
             let inputExp, parsedExp;
 
-            // 1 - replace predefined substrings
+            // replace predefined substrings
             inputExp = substringReplacer(input);
 
             // Math.js parser and evaluation
@@ -187,7 +254,6 @@ const parseController = (function() {
 
             // return as a string ELSE will be return as an Object
             return parsedExp + '';
-            
         },
 
     }
@@ -211,10 +277,11 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
         s(DOM.btnClear).addEventListener('click', clearValue);
         s(DOM.btnDelete).addEventListener('click', deleteValue);
         s(DOM.btnEqual).addEventListener('click', getResult);
+        s(DOM.fieldResults).addEventListener('click', getPrevExp);
 
     };
 
-    // return input value
+    // return UI input value
     const input = function() {
         return s(DOM.inputField).value
     };
@@ -229,10 +296,10 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
         // debugger;
         let val, newVal, hasExp, hasResult;
 
-        // 1 - save target value
+        // save target value
         val = e.target.value;
 
-        // 2 - get current expression value
+        // get current expression value
         hasExp = dataCtrl.getData('curExp');
         hasResult = dataCtrl.getData('result')
 
@@ -258,10 +325,10 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
 
     const clearValue = function() {
 
-        // 1 - reset expression data
+        // reset expression data
         dataCtrl.reset()
 
-        // 2 - reset input field
+        // reset input field
         UICtrl.reset()
     
     };
@@ -286,7 +353,7 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
     const getResult = function() {
         // debugger;
         let isValidated, result;
-        
+
         try {
 
             // math.parse(input)
@@ -295,17 +362,23 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
             // evaluate expression
             result = math.eval(isValidated)
 
+            if (result.toString().length > 7) {
+                result = result.toExponential(2)
+            } else {
+                result = result.toLocaleString()
+            }
+
             // update data newExp
             dataCtrl.updateData('parsedExp', isValidated)
 
             // update data result
             dataCtrl.updateData('result', result)
 
+            // add new row
+            UICtrl.newRow(input(), result)
+
             // diplay result to input field
             UICtrl.displayInput(result)
-
-            // log result
-            console.log(dataCtrl.getAll())
 
         } catch (error) {
 
@@ -313,12 +386,19 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
             if (!hasError()) {
                 dataCtrl.updateData('error', error + '')
                 UICtrl.displayInput(input() + '\nSyntaxError: ' + error.message)
-                console.log(error + '')
             } // else, do nothing
 
         }
 
-    };
+    }
+
+    // get previous expression from history
+    const getPrevExp = function(e) {
+        if (!e.target.className.match(/.*field-results.*/g)) {
+            const prev = e.target.parentNode.firstChild.textContent
+            UICtrl.displayInput(prev)
+        }
+    }
 
     return {
 

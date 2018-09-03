@@ -1,2 +1,2 @@
-node_modules/*.html linguist-vendored=false
+node_modules/*.html linguist-vendored
 docs/* linguist-documentation

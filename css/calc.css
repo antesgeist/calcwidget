@@ -1,14 +1,5 @@
 /* BULMA OVERRIDE */
 
-.columns:not(:last-child) {
-    /*margin-bottom: 0*/
-}
-
-.columns:last-child {
-    /*margin-bottom: calc(1.5rem - .75rem)*/
-}
-
-
 .calc-wrap {
     border-radius: 5px;
     box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
@@ -95,8 +86,4 @@ div[class*="field-"], .button {
 .field-input .input,
 .field-input .control {
     height: 100%;
-}
-
-.field-buttons {
-    /*height: 150px;*/
 }

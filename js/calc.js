@@ -1,19 +1,7 @@
 'use strict'
 
-/* CALCULATOR WIDGET
- *
- * - PARSE CONTROLLER           - calculate parsed input
- * - DATA CONTROLLER            - control result data
- * - UI CONTROLLER              - control UI
- * - APP CONTROLLER             - control flow
- *
- */
-
-// Bind "s" as querySelector
+// Bind "s" as global querySelector
 const s = document.querySelector.bind(document)
-
-
-
 
 // DATA CONTROLLER
 const dataController = (function() {
@@ -30,33 +18,24 @@ const dataController = (function() {
             output: [],
         }
     };
-    
-    // create function constructor
-    // recreate data arguments
 
     return {
-
         getProps: function() {
             return Object.keys(data);
-        },
-        
+        },        
         updateData: function(prop, val) {
             data[prop] = val;
         },
-
         resetExp: function() {
             data.curExp = 0;
             console.log('Cleared.');
         },
-
         getData: function(prop) {
             return data[prop];
         },
-
         getAll: function() {
             return JSON.stringify(data, 0, 4);
         },
-
         reset: function() {
             for (let prop in data) {
                 if (typeof data[prop] !== 'object') {
@@ -64,14 +43,9 @@ const dataController = (function() {
                 }
             }
         }
-
     }
 
-})(); // END DATA CONTROLLER
-
-
-
-
+})();
 
 // UI CONTROLLER
 const UIController = (function() {
@@ -116,23 +90,18 @@ const UIController = (function() {
         getDOMStrings: function() {
             return DOMStrings
         },
-        
         displayInput: function(val) {
             inputFieLd.value = val
         },
-
         deleteInput: function(input) {
             inputFieLd.value = newString(input)
         },
-
         deleteError: function(input) {
             inputFieLd.value = input.replace(/(.+)\n(.*error.*)/gi, '$1')
         },
-
         hasValue: function(el) {
             return el.hasAttribute('value')
         },
-
         newRow: function(exp, output) {
 
             // set row elements
@@ -186,21 +155,14 @@ const UIController = (function() {
             } else {
                 resultsContainer.className += ' scrollable'
                 resultsFloat.style = null
-            }
-            
+            }  
         },
-
         reset: function() {
             inputFieLd.value = ""
         }
-
     }
 
-})(); // END UI CONTROLLER
-
-
-
-
+})();
 
 // PARSE CONTROLLER
 const parseController = (function() {
@@ -227,7 +189,6 @@ const parseController = (function() {
 
     // substring replacer
     const substringReplacer = function(expression) {
-        // debugger;
         let newExp = expression;
 
         // loop through each string and check for replaceable character
@@ -236,14 +197,11 @@ const parseController = (function() {
                 newExp = newExp.replace(charToReplace[j][0], charToReplace[j][1]);
             }
         }
-
         return newExp;
     };
 
     return {
-
         validator: function(input) {
-            // debugger;
             let inputExp, parsedExp;
 
             // replace predefined substrings
@@ -255,14 +213,9 @@ const parseController = (function() {
             // return as a string ELSE will be return as an Object
             return parsedExp + '';
         },
-
     }
 
-})(); // END PARSE CONTROLLER
-
-
-
-
+})();
 
 // APP CONTROLLER
 const appController = (function(UICtrl, dataCtrl, parseCtrl) {
@@ -293,7 +246,6 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
 
     // display value to input field
     const displayValue = function(e) {
-        // debugger;
         let val, newVal, hasExp, hasResult;
 
         // save target value
@@ -320,21 +272,17 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
             // 4 - display input value
             UICtrl.displayInput(newVal);
         }
-
     };
 
     const clearValue = function() {
-
         // reset expression data
         dataCtrl.reset()
-
         // reset input field
         UICtrl.reset()
     
     };
 
     const deleteValue = function() {
-
         // check if expression isn't empty
         if (hasError()) {
             UICtrl.deleteError(input())
@@ -347,16 +295,12 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
             // 2 - update data structure expression
             dataCtrl.updateData('curExp', input())
         }
-
     };
 
     const getResult = function() {
-        // debugger;
         let isValidated, result;
 
         try {
-
-            // math.parse(input)
             isValidated = parseCtrl.validator(input())
 
             // evaluate expression
@@ -382,14 +326,14 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
 
         } catch (error) {
 
-            // if not error, do this
+            // if state has NO error, update error state with NEW error
             if (!hasError()) {
+                // push error message to state
                 dataCtrl.updateData('error', error + '')
+                // display error below current expression
                 UICtrl.displayInput(input() + '\nSyntaxError: ' + error.message)
-            } // else, do nothing
-
+            }
         }
-
     }
 
     // get previous expression from history
@@ -401,22 +345,14 @@ const appController = (function(UICtrl, dataCtrl, parseCtrl) {
     }
 
     return {
-
         init: function() {
             console.log('widget started_:')
             setupEventListeners()
             UICtrl.reset()
         },
-
     }
 
 })(UIController, dataController, parseController); // END APP CONTROLLER
 
-
-
 // INITIALIZE APP 
 appController.init();
-
-function all() {
-    console.log(dataController.getAll())
-}

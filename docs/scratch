@@ -1,41 +1,46 @@
-Added UI Expression History and Recalculation
 
-- add new rows on results/history field
-- display calculated result in input field
-- auto thousand commas up to 7 digits
-- comma regex validation
-- tweaked font-sizes
-- added history scrolling trigger
-- enabled previous expression recalculation
-- string toExponential if string > 7
-- input to right aligned
-- results field new inner floatingdiv
-- if no history > insert new row to bottom most position and append new ones
+/* CALCULATOR WIDGET
+ *
+ * - PARSE CONTROLLER           - calculate parsed input
+ * - DATA CONTROLLER            - control result data
+ * - UI CONTROLLER              - control UI
+ * - APP CONTROLLER             - control flow
+ *
+ */
 
-(function($) {
+---
 
-   var box = $(".member-box");
+<!-- MARKUP
 
-   $(window).on('scroll', function(event) {
-       
-     var scrollTop = $(window).scrollTop();
-     var topMargin = 50;
-     var topMin = 2100;
-     var topMax = 2535;
-     var targetView = (scrollTop - topMin) + topMargin;
+Container
+    Section 1 - Results
+        
+        - insert before end
 
-     // Log Scroll Values
-     console.log("scrollTop: "+ scrollTop +
-                 " targetView :"+ targetView +
-                 " topMin :"+ topMin +
-                 " topMax :" + topMax);
+        Row n
+            input values | = | result
+            input values | = | result
+            input values | = | result ...
 
-     if (scrollTop > topMin && scrollTop < topMax){
-       box.css({"transform":"translate3d(0px," + targetView + "px, 0px)"});
-     }
+    Section 2 - Input
 
-    });
-})(jQuery);
+        - left-aligned
+        - wrap-text
+        - keyPress operator events
+        
+        Row
+            parse ==> input 1 | op | input 2 | op | ... | input n
+    
+    Section 3 - Buttons ()
+
+        7   8   9   /   DEL    C
+        4   5   6   x   (       )
+        1   2   3   /   x^2     sqrt
+        0   .   %   +   [    =    ]
+    
+        Row 4 / Col6
+
+-->
 
 ---
 

@@ -4,85 +4,33 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Widgets</title>
+    <title>CalcWidget</title>
     <link rel="stylesheet" type="text/css" href="css/bulma.min.css">
     <link rel="stylesheet" type="text/css" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="css/calc.css">
 </head>
 
 <body>
-
-    <!-- <script type="text/javascript">
-        
-
-        console.log(math.sqrt(9));
-
-
-    </script> -->
- 
     <div class="container is-fluid">
-
-        <!-- MARKUP
-
-        Container
-            Section 1 - Results
-                
-                - insert before end
-
-                Row n
-                    input values | = | result
-                    input values | = | result
-                    input values | = | result ...
-
-            Section 2 - Input
-
-                - left-aligned
-                - wrap-text
-                - keyPress operator events
-                
-                Row
-                    parse ==> input 1 | op | input 2 | op | ... | input n
-            
-            Section 3 - Buttons ()
-
-                7   8   9   /   DEL    C
-                4   5   6   x   (       )
-                1   2   3   /   x^2     sqrt
-                0   .   %   +   [    =    ]
-            
-                Row 4 / Col6
-    
-        -->
-
+        <!-- TITLE -->
         <section class="section">
             <div class="container">
                 <h1 class="title">Widgets</h1>
             </div>
         </section>
 
+        <!-- ELEMENTS -->
         <section class="section">
             <div class="container">
-
-                
-
                 <div class="columns">
-
-
-
                     <!-- COL 1 -->
                     <div class="column calc-wrap">
-
                         <div class="field header">
                             <p>Calc Widget</p>
                         </div>
-                        
-
-
                         <!-- RESULTS FIELD -->
                         <div class="field field-results">
-
                             <div class="floatbot">
-                            
                                 <!-- NEW RESULTS HERE -->
                                 
                                 <!-- <div class="columns results">
@@ -90,31 +38,19 @@
                                     <div class="column equals">=</div>
                                     <div class="column output">82</div>
                                 </div> -->
-
                             </div>
-
-                        </div> <!-- END RESULTS -->
-                        
-
-
+                        </div>
                         <!-- INPUT FIELD -->
                         <div class="field field-input">
                               <div class="control">
                                  <textarea id="input-field" class="input" type="text" placeholder="0.00" readonly>
-                                     
                                     <!-- ERROR MESSAGE: SYNTAX ERROR -->
-
                                  </textarea>
                               </div>
-                        </div> <!-- END INPUT -->
-
-
-
+                        </div>
                         <!-- BUTTONS FIELD -->
                         <div class="field field-buttons">
-
                             <div class="columns">
-
                                 <!-- NUMBERS -->
                                 <div class="column is-mobile">
                                     <div class="columns">
@@ -213,29 +149,13 @@
                                         </div>
                                     </div>
                                 </div> <!-- END OPERATORS -->
-
                             </div>
-
                         </div> <!-- END BUTTONS -->
-
-                    </div> <!-- END COL1 -->
+                    </div>
 
                     <!-- COL 2 -->
                     <div class="column">
-
-                        <!-- <div class="field">
-                          <label class="label">Name</label>
-                          <div class="control">
-                            <input class="input" type="text" placeholder="Text input">
-                          </div>
-                        </div>
-
-                        <div class="field">
-                            <div class="control"><button class="button is-primary">Submit</button></div>
-                        </div> -->
-
                         ...
-
                     </div>
 
                     <!-- COL 3 -->                        
@@ -244,17 +164,12 @@
                     </div>
 
             </div> <!-- END COLUMNS -->
-
-
         </section>
-
-
     </div> <!-- END CONTAINER -->
 
     <script type="text/javascript" src="js/calc.js"></script>
     <script type="text/javascript" src="node_modules/mathjs/dist/math.min.js"></script>
 
-  
 </body>
 
 </html>
